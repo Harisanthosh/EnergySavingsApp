@@ -19,6 +19,7 @@ def run_query(table):
     maxArr = []
     totalArr = [minArr, avgArr, maxArr]
     cr = ['r', 'b', 'g', 'y', 'p']
+    tr= ['energyMin_kW','energyAve_kW','energyMax_kW']
     rowcolor = 0
 
     for row in data:
@@ -31,8 +32,8 @@ def run_query(table):
     plt.ylabel('Energy Consumption Signal')
     plt.title('Energy Database Overview')
     for t in totalArr:
-        plt.plot(processArr, t, color=cr[rowcolor])
-        plt.legend(loc='upper left')
+        plt.plot(processArr, t, color=cr[rowcolor], label=tr[rowcolor])
+        plt.legend(loc='lower left')
         rowcolor += 1
 
     plt.show()
