@@ -32,6 +32,24 @@ def processtime_data(table,processtime):
     data = c.fetchall()
     return json.dumps(data)
 
+@app.route('/compareordnungdata/<table>/<processtime>/<avgval>')
+def compare_processtime_data(table,processtime,avgval):
+    conn = sqlite3.connect('energy.db')
+
+    c = conn.cursor()
+
+    c.execute("SELECT processTime,energyMin_kW,energyAve_kW,energyMax_kW FROM " + table + " WHERE processTime = "+ processtime)
+
+    data = c.fetchall()
+
+    for row in data:
+        std_avg_val = row[2]
+
+    if float(avgval) > std_avg_val:
+        return 'Process taking longer time than usual when compared to the expected result!'
+    else:
+        return json.dumps(data)
+
 def run_query(table):
     conn = sqlite3.connect('energy.db')
 
