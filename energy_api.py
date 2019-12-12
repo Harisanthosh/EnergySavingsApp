@@ -21,6 +21,17 @@ def ordnung_data(table):
     data = c.fetchall()
     return json.dumps(data)
 
+@app.route('/getordnungdata/<table>/<processtime>')
+def processtime_data(table,processtime):
+    conn = sqlite3.connect('energy.db')
+
+    c = conn.cursor()
+
+    c.execute("SELECT processTime,energyMin_kW,energyAve_kW,energyMax_kW FROM " + table + " WHERE processTime = "+ processtime)
+
+    data = c.fetchall()
+    return json.dumps(data)
+
 def run_query(table):
     conn = sqlite3.connect('energy.db')
 
