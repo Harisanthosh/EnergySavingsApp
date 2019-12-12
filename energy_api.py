@@ -1,7 +1,25 @@
 import sqlite3
 import matplotlib.pyplot as plt
 import sys
+from flask import Flask
+from flask import request
+from flask import json
 
+app = Flask(__name__)
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
+@app.route('/getordnungdata/<table>')
+def ordnung_data(table):
+    conn = sqlite3.connect('energy.db')
+
+    c = conn.cursor()
+
+    c.execute("SELECT processTime,energyMin_kW,energyAve_kW,energyMax_kW FROM " + table)
+
+    data = c.fetchall()
+    return json.dumps(data)
 
 def run_query(table):
     conn = sqlite3.connect('energy.db')
