@@ -67,45 +67,45 @@ app.layout = html.Div(children=[
     html.Button('Get Energy Table', id='button_neo',style={'color': '#D4AF37'})
 ])
 
-@app.callback(Output("myGraph", "figure"),[Input("input_text", "value"),Input("button_neo", "n_clicks")])
-def update_energy_table(value,n_clicks):
-    if n_clicks >= 1:
-        conn = sqlite3.connect('energy.db')
+@app.callback(Output("myGraph", "figure"),[Input("button_neo", "n_clicks")], [State("input_text", "value")])
+def update_energy_table(n_clicks,value):
+    conn = sqlite3.connect('energy.db')
 
-        c = conn.cursor()
+    c = conn.cursor()
 
-        c.execute("SELECT processTime,energyMin_kW,energyAve_kW,energyMax_kW FROM " + value)
+    c.execute("SELECT processTime,energyMin_kW,energyAve_kW,energyMax_kW FROM " + value)
 
-        data = c.fetchall()
+    data = c.fetchall()
 
-        conn.close()
-        print(data)
-        processArr = []
-        minArr = []
-        avgArr = []
-        maxArr = []
-        totalArr = [minArr, avgArr, maxArr]
-        cr = ['r', 'b', 'g', 'y', 'p']
-        tr = ['energyMin_kW', 'energyAve_kW', 'energyMax_kW']
-        rowcolor = 0
+    conn.close()
+    print(data)
+    processArr = []
+    minArr = []
+    avgArr = []
+    maxArr = []
+    totalArr = [minArr, avgArr, maxArr]
+    cr = ['r', 'b', 'g', 'y', 'p']
+    tr = ['energyMin_kW', 'energyAve_kW', 'energyMax_kW']
+    rowcolor = 0
 
-        for row in data:
-            processArr.append(row[0])
-            minArr.append(row[1])
-            avgArr.append(row[2])
-            maxArr.append(row[3])
+    for row in data:
+        processArr.append(row[0])
+        minArr.append(row[1])
+        avgArr.append(row[2])
+        maxArr.append(row[3])
 
-        fig = plt.figure()
-        plt.xlabel('Process Time')
-        plt.ylabel('Energy Consumption Signal')
-        plt.title('Energy Database Overview')
-        for t in totalArr:
-            plt.plot(processArr, t, color=cr[rowcolor], label=tr[rowcolor])
-            plt.legend(loc='lower left')
-            rowcolor += 1
+    fig = plt.figure()
+    plt.xlabel('Process Time')
+    plt.ylabel('Energy Consumption Signal')
+    plt.title('Energy Database Overview')
+    for t in totalArr:
+        plt.plot(processArr, t, color=cr[rowcolor], label=tr[rowcolor])
+        plt.legend(loc='lower left')
+        rowcolor += 1
 
-        plotly_fig = mpl_to_plotly(fig)
-        return plotly_fig
+    plotly_fig = mpl_to_plotly(fig)
+    return plotly_fig
+
 
     # plt.show()
 
