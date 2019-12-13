@@ -5,7 +5,10 @@ from dash.dependencies import Input, Output, State
 import sqlite3
 #from plotly.offline import init_notebook_mode, plot_mpl
 from plotly.tools import mpl_to_plotly
-import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
+
+from matplotlib import pyplot as plt
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -51,7 +54,7 @@ plotly_fig = mpl_to_plotly(fig)
 
 
 app.layout = html.Div(children=[
-    html.H1(children='Energy Dashboard'),
+    html.H1(children='PPS03 Energy Dashboard'),
 
     html.Div(id="energy-table",children='''
         Energy Dashboard for PPS Systems
