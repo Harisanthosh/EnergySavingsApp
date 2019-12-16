@@ -13,6 +13,11 @@ from matplotlib import pyplot as plt
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
+colors = {
+    'background': '#111111',
+    'text': '#7FDBFF'
+}
+
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 conn = sqlite3.connect('energy.db')
@@ -51,16 +56,21 @@ for t in totalArr:
 plotly_fig = mpl_to_plotly(fig)
 #plt.show()
 
+#'backgroundColor': colors['background']
+#'color': colors['text'],
 
-
-app.layout = html.Div(children=[
+app.layout = html.Div(style={'textAlign': 'center'},children=[
+    html.Img(src=app.get_asset_url('emden_leer.png'),style={
+                'height': '50%',
+                'width': '50%'
+            }),
     html.H1(children='PPS03 Energy Dashboard'),
 
-    html.Div(id="energy-table",children='''
-        Energy Dashboard for PPS Systems
-    '''),
+    # html.Div(id="energy-table",children='''
+    #     Energy Dashboard for PPS Systems
+    # '''),
 
-    dcc.Graph(id='myGraph', figure=plotly_fig),
+    html.Div([dcc.Graph(id='myGraph', figure=plotly_fig)],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
     html.Br(),
     dcc.Input(
             id="input_text".format("text"),
