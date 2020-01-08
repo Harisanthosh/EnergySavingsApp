@@ -5,6 +5,8 @@ from dash.dependencies import Input, Output, State
 import sqlite3
 #from plotly.offline import init_notebook_mode, plot_mpl
 from plotly.tools import mpl_to_plotly
+from Labjack_reader import retrieve_analogvalues
+
 import matplotlib
 matplotlib.use('Agg')
 
@@ -92,6 +94,7 @@ def update_energy_table(n_clicks,value):
 
     conn.close()
     print(data)
+    retrieve_analogvalues()
     processArr = []
     minArr = []
     avgArr = []
