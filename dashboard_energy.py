@@ -76,37 +76,30 @@ ys = []
 
 xs.append(0)
 ys.append(0)
-# This function is called periodically from FuncAnimation
-def animate(i, xs, ys):
+res = requests.get(url_labjack)
+respdata = res.json()
+print(respdata)
+xs.append(xs[-1] + 1)
+ys.append(respdata[0])
 
+# Add x and y to lists
+# xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
+# ys.append(temp_c)
 
-    #temp_c = round(tmp102.read_temp(), 2)
-    res = requests.get(url_labjack)
-    respdata = res.json()
-    print(respdata)
-    xs.append(xs[-1] + 1)
-    ys.append(respdata[0])
+# Limit x and y lists to 20 items
+xs = xs[-20:]
+ys = ys[-20:]
 
-    # Add x and y to lists
-    # xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
-    # ys.append(temp_c)
+# Draw x and y lists
+ax.clear()
+ax.plot(xs, ys)
 
-    # Limit x and y lists to 20 items
-    xs = xs[-20:]
-    ys = ys[-20:]
-
-    # Draw x and y lists
-    ax.clear()
-    ax.plot(xs, ys)
-
-    # Format plot
-    plt.xticks(rotation=45, ha='right')
-    plt.subplots_adjust(bottom=0.30)
-    plt.title('Real time values of LabJack Controller')
-    plt.ylabel('Power Measured')
-
-# Set up plot to call animate() function periodically
-ani = animation.FuncAnimation(fig1, animate, fargs=(xs, ys), interval=1000)
+# Format plot
+plt.xticks(rotation=45, ha='right')
+plt.subplots_adjust(bottom=0.30)
+plt.title('Real time values of LabJack Controller')
+plt.ylabel('Power Measured')
+#ani = animation.FuncAnimation(fig1, animate, fargs=(xs, ys), interval=1000)
 plt.show()
 plotly_fig_live = mpl_to_plotly(fig1)
 
@@ -187,36 +180,34 @@ def update_energy_table(n_clicks,value):
 @app.callback(Output('live-update-graph','figure'),
               [Input('interval-component', 'n_intervals')])
 def update_graph(n):
+    res = requests.get(url_labjack)
+    respdata = res.json()
+    print(respdata)
+    global xs
+    global ys
+    xs.append(n + 1)
+    ys.append(respdata[0])
+    print(xs)
+    print(ys)
 
-    # This function is called periodically from FuncAnimation
-    def animate(i, xs, ys):
-        # temp_c = round(tmp102.read_temp(), 2)
-        res = requests.get(url_labjack)
-        respdata = res.json()
-        print(respdata)
-        xs.append(xs[-1] + 1)
-        ys.append(respdata[0])
+    # Add x and y to lists
+    # xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
+    # ys.append(temp_c)
 
-        # Add x and y to lists
-        # xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
-        # ys.append(temp_c)
+    # Limit x and y lists to 20 items
+    xs = xs[-20:]
+    ys = ys[-20:]
 
-        # Limit x and y lists to 20 items
-        xs = xs[-20:]
-        ys = ys[-20:]
+    # Draw x and y lists
+    ax.clear()
+    ax.plot(xs, ys)
 
-        # Draw x and y lists
-        ax.clear()
-        ax.plot(xs, ys)
-
-        # Format plot
-        plt.xticks(rotation=45, ha='right')
-        plt.subplots_adjust(bottom=0.30)
-        plt.title('Real time values of LabJack Controller')
-        plt.ylabel('Power Measured')
-
-    # Set up plot to call animate() function periodically
-    ani = animation.FuncAnimation(fig1, animate, fargs=(xs, ys), interval=1000)
+    # Format plot
+    plt.xticks(rotation=45, ha='right')
+    plt.subplots_adjust(bottom=0.30)
+    plt.title('Real time values of LabJack Controller')
+    plt.ylabel('Power Measured')
+    # ani = animation.FuncAnimation(fig1, animate, fargs=(xs, ys), interval=1000)
     plt.show()
     plotly_fig_live = mpl_to_plotly(fig1)
     return plotly_fig_live
