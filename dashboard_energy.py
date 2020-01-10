@@ -10,6 +10,7 @@ import requests
 #from Labjack_reader import retrieve_analogvalues
 import plotly.graph_objs as go
 from collections import deque
+import matplotlib.animation as animation
 
 import matplotlib
 matplotlib.use('Agg')
@@ -68,8 +69,46 @@ for t in totalArr:
 plotly_fig = mpl_to_plotly(fig)
 #plt.show()
 
-#'backgroundColor': colors['background']
-#'color': colors['text'],
+fig1 = plt.figure()
+ax = fig1.add_subplot(1, 1, 1)
+xs = []
+ys = []
+
+xs.append(0)
+ys.append(0)
+# This function is called periodically from FuncAnimation
+def animate(i, xs, ys):
+
+
+    #temp_c = round(tmp102.read_temp(), 2)
+    res = requests.get(url_labjack)
+    respdata = res.json()
+    print(respdata)
+    xs.append(xs[-1] + 1)
+    ys.append(respdata[0])
+
+    # Add x and y to lists
+    # xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
+    # ys.append(temp_c)
+
+    # Limit x and y lists to 20 items
+    xs = xs[-20:]
+    ys = ys[-20:]
+
+    # Draw x and y lists
+    ax.clear()
+    ax.plot(xs, ys)
+
+    # Format plot
+    plt.xticks(rotation=45, ha='right')
+    plt.subplots_adjust(bottom=0.30)
+    plt.title('Real time values of LabJack Controller')
+    plt.ylabel('Power Measured')
+
+# Set up plot to call animate() function periodically
+ani = animation.FuncAnimation(fig1, animate, fargs=(xs, ys), interval=1000)
+plt.show()
+plotly_fig_live = mpl_to_plotly(fig1)
 
 app.layout = html.Div(style={'textAlign': 'center'},children=[
     html.Img(src=app.get_asset_url('emden_leer.png'),style={
@@ -91,7 +130,8 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
         ),
     html.Button('Get Energy Table', id='button_neo',style={'color': '#D4AF37'}),
     html.H4(id='live-update-text'),
-    dcc.Graph(id='live-update-graph',animate=True,style={'width':1000}),
+    html.Div([dcc.Graph(id='live-update-graph', figure=plotly_fig_live)],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
+    # dcc.Graph(id='live-update-graph',animate=True,style={'width':1000}),
     dcc.Interval(
         id='interval-component',
         interval=1*1000, # 2000 milliseconds = 2 seconds
@@ -143,81 +183,43 @@ def update_energy_table(n_clicks,value):
 
 
     # plt.show()
+
 @app.callback(Output('live-update-graph','figure'),
               [Input('interval-component', 'n_intervals')])
 def update_graph(n):
-    res = requests.get(url_labjack)
-    respdata = res.json()
-    print(respdata)
-    data = {
-        'AIN0': [],
-        'AIN1': [],
-        'AIN2': [],
-        'AIN3': []
-    }
-    X.append(X[-1] + 1)
-    Y.append(respdata[0])
-    data['AIN0'].append(respdata[0])
-    data['AIN1'].append(respdata[1])
-    data['AIN2'].append(respdata[2])
-    data['AIN3'].append(respdata[3])
 
-    # fig = plotly.subplots.make_subplots(rows=2, cols=2, vertical_spacing=0.2)
-    # fig['layout']['margin'] = {
-    #     'l': 30, 'r': 10, 'b': 30, 't': 10
-    # }
-    # fig['layout']['legend'] = {'x': 0, 'y': 1, 'xanchor': 'left'}
-    #
-    # fig.append_trace({
-    #     'x': list(range(n)),
-    #     'y': data['AIN0'],
-    #     'name': 'Power of AIN0',
-    #     'mode': 'lines+markers',
-    #     'type': 'scatter'
-    # }, 1, 1)
-    # fig.append_trace({
-    #     'x': list(range(n)),
-    #     'y': data['AIN1'],
-    #     'name': 'Power of AIN1',
-    #     'mode': 'lines+markers',
-    #     'type': 'scatter'
-    # }, 2, 1)
-    # fig.append_trace({
-    #     'x': list(range(n)),
-    #     'y': data['AIN2'],
-    #     'name': 'Power of AIN2',
-    #     'mode': 'lines+markers',
-    #     'type': 'scatter'
-    # }, 1, 2)
-    # fig.append_trace({
-    #     'x': list(range(n)),
-    #     'y': data['AIN3'],
-    #     'name': 'Power of AIN3',
-    #     'mode': 'lines+markers',
-    #     'type': 'scatter'
-    # }, 2, 2)
+    # This function is called periodically from FuncAnimation
+    def animate(i, xs, ys):
+        # temp_c = round(tmp102.read_temp(), 2)
+        res = requests.get(url_labjack)
+        respdata = res.json()
+        print(respdata)
+        xs.append(xs[-1] + 1)
+        ys.append(respdata[0])
 
+        # Add x and y to lists
+        # xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
+        # ys.append(temp_c)
 
-    # print(type(respdata))
-    # fig = go.Figure(
-    #     data = [go.Scatter(
-    #     # x = list(range(len(data))),
-    #     x = list(range(n)),
-    #     y = respdata,
-    #     mode='lines+markers'
-    #     )])
+        # Limit x and y lists to 20 items
+        xs = xs[-20:]
+        ys = ys[-20:]
 
-    # return fig
+        # Draw x and y lists
+        ax.clear()
+        ax.plot(xs, ys)
 
-    data = plotly.graph_objs.Scatter(
-        x=list(X),
-        y=list(Y),
-        name='Scatter',
-        mode='lines+markers'
-    )
+        # Format plot
+        plt.xticks(rotation=45, ha='right')
+        plt.subplots_adjust(bottom=0.30)
+        plt.title('Real time values of LabJack Controller')
+        plt.ylabel('Power Measured')
 
-    return {'data': [data], 'layout': go.Layout(xaxis=dict(range=[min(X), max(X)]),
-                                                yaxis=dict(range=[min(Y), max(Y)]), )}
+    # Set up plot to call animate() function periodically
+    ani = animation.FuncAnimation(fig1, animate, fargs=(xs, ys), interval=1000)
+    plt.show()
+    plotly_fig_live = mpl_to_plotly(fig1)
+    return plotly_fig_live
 
 
 @app.callback(Output('live-update-text', 'children'),
