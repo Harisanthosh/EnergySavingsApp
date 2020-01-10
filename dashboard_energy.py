@@ -5,6 +5,7 @@ from dash.dependencies import Input, Output, State
 import sqlite3
 #from plotly.offline import init_notebook_mode, plot_mpl
 from plotly.tools import mpl_to_plotly
+import requests
 #from Labjack_reader import retrieve_analogvalues
 
 import matplotlib
@@ -13,6 +14,7 @@ matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
 
+url_labjack = "http://localhost:5000/labjackvalues"
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 colors = {
@@ -79,7 +81,13 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
             type="text",
             placeholder="input type text".format("text"),
         ),
-    html.Button('Get Energy Table', id='button_neo',style={'color': '#D4AF37'})
+    html.Button('Get Energy Table', id='button_neo',style={'color': '#D4AF37'}),
+    html.H4(id='live-update-text'),
+    dcc.Interval(
+        id='interval-component',
+        interval=2000, # 2000 milliseconds = 2 seconds
+        n_intervals=0
+    )
 ])
 
 @app.callback(Output("myGraph", "figure"),[Input("button_neo", "n_clicks")], [State("input_text", "value")])
@@ -124,6 +132,15 @@ def update_energy_table(n_clicks,value):
 
 
     # plt.show()
+
+@app.callback(Output('live-update-text', 'children'),
+              [Input('interval-component', 'n_intervals')])
+def update_layout(n):
+    res = requests.get(url_labjack)
+    data = res.json()
+    print(data)
+    #return 'Labjack Values are {}'.format(data)
+    return 'Live updating successfull for {} refreshes'.format(n)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
