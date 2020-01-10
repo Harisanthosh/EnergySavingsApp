@@ -1,6 +1,7 @@
 from labjack import ljm
 import math
 import time
+import paho.mqtt.publish as publish
 
 
 def retrieve_analogvalues():

@@ -4,11 +4,37 @@ import sys
 from flask import Flask
 from flask import request
 from flask import json
+from labjack import ljm
+import math
+import time
 
 app = Flask(__name__)
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
+
+@app.route('/labjackvalues')
+def labjack_values():
+    # Open first found LabJack
+    handle = ljm.openS("ANY", "ANY", "ANY")
+
+    # Call eReadName to read the serial number from the LabJack.
+    name = "SERIAL_NUMBER"
+    result = ljm.eReadName(handle, name)
+
+    print("\neReadName result: ")
+    print("    %s = %f" % (name, result))
+    numFrames = 4
+    # names = ["SERIAL_NUMBER", "PRODUCT_ID", "FIRMWARE_VERSION"]
+    names = ['AIN0', 'AIN1', 'AIN2', 'AIN3']
+    results = ljm.eReadNames(handle, numFrames, names)
+
+    print("\neReadNames results: ")
+    for i in range(numFrames):
+        results[i] = (abs(results[i]) / 0.1) * 9
+        print("Measured Power of - %s, value : %f" % (names[i], results[i]))
+
+    return json.dumps(results)
 
 @app.route('/getordnungdata/<table>')
 def ordnung_data(table):
