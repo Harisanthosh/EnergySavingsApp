@@ -76,24 +76,40 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
             }),
     html.H1(children='PPS03 Energy Dashboard'),
 
-    # html.Div(id="energy-table",children='''
-    #     Energy Dashboard for PPS Systems
-    # '''),
+    html.Div([
+    dcc.Dropdown(
+            id='demo-dropdown',
+            options=[
+                {'label': 'dataRM', 'value': 'dataRM'},
+                {'label': 'dataQC', 'value': 'dataQC'},
+                {'label': 'dataRM_WS1', 'value': 'dataRM_WS1'},
+                {'label': 'dataRM_WS3', 'value': 'dataRM_WS3'},
+                {'label': 'dataRM_WS4', 'value': 'dataRM_WS4'},
+                {'label': 'dataWS1_WS2', 'value': 'dataWS1_WS2'},
+                {'label': 'dataWS3_WS4', 'value': 'dataWS3_WS4'},
+                {'label': 'dataWS4_WS1', 'value': 'dataWS4_WS1'},
+                {'label': 'dataWS2_QR', 'value': 'dataWS2_QR'},
+                {'label': 'dataWS4_QR', 'value': 'dataWS4_QR'},
+                {'label': 'dataWS1_QR', 'value': 'dataWS1_QR'},
+                {'label': 'dataWS1W', 'value': 'dataWS1W'},
+                {'label': 'dataWS2W', 'value': 'dataWS2W'},
+                {'label': 'dataWS3R', 'value': 'dataWS3R'},
+                {'label': 'dataWS4R', 'value': 'dataWS4R'},
+                {'label': 'dataWS4B', 'value': 'dataWS4B'},
+                {'label': 'dataWS1B', 'value': 'dataWS1B'}
+            ],
+            value='dataRM',
+            style={'height': '30px', 'width': '200px'}
+        )
+    ],style={'display': 'inline-block','vertical-align': 'middle'}),
 
     html.Div([dcc.Graph(id='myGraph', figure=plotly_fig)],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
     html.Br(),
-    dcc.Input(
-            id="input_text".format("text"),
-            type="text",
-            placeholder="input type text".format("text"),
-        ),
-    html.Button('Get Energy Table', id='button_neo',style={'color': '#D4AF37'}),
     html.H4(id='live-update-text'),
     # html.Div([dcc.Graph(id='live-update-graph',animate=True)],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
     html.Div([
         html.Iframe(src = 'http://localhost:5000/servelivedata', height = 600, width = 600)
     ],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
-    # dcc.Graph(id='live-update-graph',animate=True,style={'width':1000}),
     dcc.Interval(
         id='interval-component',
         interval=1*1000, # 2000 milliseconds = 2 seconds
@@ -101,7 +117,7 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
     )
 ])
 
-@app.callback(Output("myGraph", "figure"),[Input("button_neo", "n_clicks")], [State("input_text", "value")])
+@app.callback(Output("myGraph", "figure"),[Input('demo-dropdown', 'value')], [State("demo-dropdown", "value")])
 def update_energy_table(n_clicks,value):
     if(value == None):
         value = "dataRM"
@@ -146,48 +162,6 @@ def update_energy_table(n_clicks,value):
 
     # plt.show()
 
-# @app.callback(Output('live-update-graph','figure'),
-#               [Input('interval-component', 'n_intervals')])
-# def update_graph(n):
-#     res = requests.get(url_labjack)
-#     respdata = res.json()
-#     print(respdata)
-#     data = {
-#         'AIN0': [],
-#         'AIN1': [],
-#         'AIN2': [],
-#         'AIN3': []
-#     }
-#     X.append(X[-1] + 1)
-#     Y.append(respdata[0])
-#     data['AIN0'].append(respdata[0])
-#     data['AIN1'].append(respdata[1])
-#     data['AIN2'].append(respdata[2])
-#     data['AIN3'].append(respdata[3])
-#
-#     # print(type(respdata))
-#     # fig = go.Figure(
-#     #     data = [go.Scatter(
-#     #     # x = list(range(len(data))),
-#     #     x = list(range(n)),
-#     #     y = respdata,
-#     #     mode='lines+markers'
-#     #     )])
-#
-#     # return fig
-#
-#     data = plotly.graph_objs.Scatter(
-#         x=list(X),
-#         y=list(Y),
-#         name='Scatter',
-#         mode='lines+markers'
-#     )
-#
-#     return dict(data=[data], layout=go.Layout(xaxis=dict(range=[min(X), max(X)]),
-#                                                 yaxis=dict(range=[min(Y), max(Y)]),))
-#
-#     # return {'data': [data], 'layout': go.Layout(xaxis=dict(range=[min(X), max(X)]),
-#     #                                             yaxis=dict(range=[min(Y), max(Y)]), )}
 
 @app.callback(Output('live-update-text', 'children'),
               [Input('interval-component', 'n_intervals')])
