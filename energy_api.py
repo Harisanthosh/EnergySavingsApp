@@ -4,14 +4,22 @@ import sys
 from flask import Flask
 from flask import request
 from flask import json
+from flask_cors import CORS
 from labjack import ljm
 import math
 import time
+import os
 
-app = Flask(__name__)
+app = Flask(__name__,static_url_path='')
+CORS(app)
+
 @app.route('/')
-def hello_world():
-    return 'Hello, World!'
+def root():
+    return 'hello!'
+
+@app.route('/servelivedata')
+def live_data_server():
+    return app.send_static_file('livedata.html')
 
 @app.route('/labjackvalues')
 def labjack_values():

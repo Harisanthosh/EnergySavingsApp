@@ -69,6 +69,44 @@ for t in totalArr:
 plotly_fig = mpl_to_plotly(fig)
 #plt.show()
 
+fig1 = plt.figure()
+ax = fig1.add_subplot(1, 1, 1)
+xs = []
+ys = []
+
+xs.append(0)
+ys.append(0)
+res = requests.get(url_labjack)
+respdata = res.json()
+print(respdata)
+xs.append(xs[-1] + 1)
+ys.append(respdata[0])
+
+for i in range(19):
+    xs.append(xs[-1] + 1)
+    ys.append(respdata[0])
+
+# Add x and y to lists
+# xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
+# ys.append(temp_c)
+
+# Limit x and y lists to 20 items
+xs = xs[-20:]
+ys = ys[-20:]
+
+# Draw x and y lists
+ax.clear()
+ax.plot(xs, ys)
+
+# Format plot
+plt.xticks(rotation=45, ha='right')
+plt.subplots_adjust(bottom=0.30)
+plt.title('Real time values of LabJack Controller')
+plt.ylabel('Power Measured')
+#ani = animation.FuncAnimation(fig1, animate, fargs=(xs, ys), interval=1000)
+plt.show()
+plotly_fig_live = mpl_to_plotly(fig1)
+
 app.layout = html.Div(style={'textAlign': 'center'},children=[
     html.Img(src=app.get_asset_url('emden_leer.png'),style={
                 'height': '50%',
@@ -89,10 +127,7 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
         ),
     html.Button('Get Energy Table', id='button_neo',style={'color': '#D4AF37'}),
     html.H4(id='live-update-text'),
-    # html.Div([dcc.Graph(id='live-update-graph',animate=True)],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
-    html.Div([
-        html.Iframe(src = 'http://localhost:5000/servelivedata', height = 600, width = 600)
-    ],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
+    html.Div([dcc.Graph(id='live-update-graph',animate=True)],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
     # dcc.Graph(id='live-update-graph',animate=True,style={'width':1000}),
     dcc.Interval(
         id='interval-component',
@@ -146,48 +181,66 @@ def update_energy_table(n_clicks,value):
 
     # plt.show()
 
-# @app.callback(Output('live-update-graph','figure'),
-#               [Input('interval-component', 'n_intervals')])
-# def update_graph(n):
-#     res = requests.get(url_labjack)
-#     respdata = res.json()
-#     print(respdata)
-#     data = {
-#         'AIN0': [],
-#         'AIN1': [],
-#         'AIN2': [],
-#         'AIN3': []
-#     }
-#     X.append(X[-1] + 1)
-#     Y.append(respdata[0])
-#     data['AIN0'].append(respdata[0])
-#     data['AIN1'].append(respdata[1])
-#     data['AIN2'].append(respdata[2])
-#     data['AIN3'].append(respdata[3])
-#
-#     # print(type(respdata))
-#     # fig = go.Figure(
-#     #     data = [go.Scatter(
-#     #     # x = list(range(len(data))),
-#     #     x = list(range(n)),
-#     #     y = respdata,
-#     #     mode='lines+markers'
-#     #     )])
-#
-#     # return fig
-#
-#     data = plotly.graph_objs.Scatter(
-#         x=list(X),
-#         y=list(Y),
-#         name='Scatter',
-#         mode='lines+markers'
-#     )
-#
-#     return dict(data=[data], layout=go.Layout(xaxis=dict(range=[min(X), max(X)]),
-#                                                 yaxis=dict(range=[min(Y), max(Y)]),))
-#
-#     # return {'data': [data], 'layout': go.Layout(xaxis=dict(range=[min(X), max(X)]),
-#     #                                             yaxis=dict(range=[min(Y), max(Y)]), )}
+@app.callback(Output('live-update-graph','figure'),
+              [Input('interval-component', 'n_intervals')])
+def update_graph(n):
+    res = requests.get(url_labjack)
+    respdata = res.json()
+    print(respdata)
+    #print(type(respdata))
+    global xs
+    global ys
+    xs.append(n + 1)
+    ys.append(respdata[0])
+    print(xs)
+    print(ys)
+    xs = xs[-20:]
+    ys = ys[-20:]
+    fig = go.Figure(
+        data = [go.Scatter(
+        # x = list(range(len(data))),
+        x = list(xs),
+        y = list(ys),
+        mode='lines+markers'
+        )])
+
+    return fig
+
+    # data = plotly.graph_objs.Scatter(
+    #     x=xs,
+    #     y=ys,
+    #     name='Scatter',
+    #     mode='lines+markers'
+    # )
+    #
+    # return {'data': [data], 'layout': go.Layout(xaxis=dict(range=[min(xs), max(xs)]),
+    #                                             yaxis=dict(range=[min(ys), max(ys)]), )}
+
+    # global xs
+    # global ys
+    # xs.append(n + 1)
+    # ys.append(respdata[0])
+    # print(xs)
+    # print(ys)
+    #
+    # # Limit x and y lists to 20 items
+    # xs = xs[-20:]
+    # ys = ys[-20:]
+    #
+    # # Draw x and y lists
+    # ax.clear()
+    # ax.plot(xs, ys)
+    #
+    # # Format plot
+    # plt.xticks(rotation=45, ha='right')
+    # plt.subplots_adjust(bottom=0.30)
+    # plt.title('Real time values of LabJack Controller')
+    # plt.ylabel('Power Measured')
+    # # ani = animation.FuncAnimation(fig1, animate, fargs=(xs, ys), interval=1000)
+    # plt.show()
+    # plotly_fig_live = mpl_to_plotly(fig1)
+    # return plotly_fig_live
+
 
 @app.callback(Output('live-update-text', 'children'),
               [Input('interval-component', 'n_intervals')])
