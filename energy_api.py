@@ -44,6 +44,18 @@ def labjack_values():
 
     return json.dumps(results)
 
+@app.route('/labjackvalues/<idx>')
+def get_labjack_value(idx):
+    # Open first found LabJack
+    handle = ljm.openS("ANY", "ANY", "ANY")
+    print("\neFetching results for the station: {}".format(idx))
+    results = (abs(ljm.eReadName(handle, idx)) / 0.1) * 9
+
+    print("\neReadNames results: {}".format(results))
+
+    return json.dumps(results)
+
+
 @app.route('/getordnungdata/<table>')
 def ordnung_data(table):
     conn = sqlite3.connect('energy.db')
