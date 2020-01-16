@@ -19,6 +19,7 @@ from matplotlib import pyplot as plt
 
 
 url_labjack = "http://localhost:5000/labjackvalues"
+url_restserver = "http://192.168.0.110:8080/api/arbeitsschritte?chargen="
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 X = deque(maxlen=10)
@@ -105,6 +106,13 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
 
     html.Div([dcc.Graph(id='myGraph', figure=plotly_fig)],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
     html.Br(),
+    dcc.Input(
+            id="input_text".format("text"),
+            type="text",
+            placeholder="Enter FischerTechnik's Charge Id".format("text"),
+        ),
+    html.Button('Monitor from Transfact', id='button_neo',style={'color': '#D4AF37'}),
+    html.Div([html.H4(id='hide-display',children='Charge Processed', style={'display': 'none'})],style={'width': '49%', 'vertical-align': 'middle'}),
     html.H4(id='live-update-text'),
     # html.Div([dcc.Graph(id='live-update-graph',animate=True)],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
     html.Div([
@@ -180,6 +188,19 @@ def update_energy_table(n_clicks,value):
 def update_layout(n):
     #return 'Labjack Values are {}'.format(data)
     return 'Live updating successfull for {} refreshes'.format(n)
+
+@app.callback(Output("hide-display", component_property='style'),[Input("button_neo", "n_clicks")], [State("input_text", "value")])
+def get_arbeitsschritte(n_clicks,value):
+    if (value == None):
+        return {'display': 'none'}
+        #value = "30632"
+    updated_url = url_restserver + value
+    res = requests.get(updated_url)
+    respdata = res.json()
+    print(respdata)
+
+    return {'display': 'block'}
+
 
 
 
