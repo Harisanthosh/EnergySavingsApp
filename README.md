@@ -1,5 +1,5 @@
 # EnergySavingsApp
-A data science project to demonstrate with actual Industry data coming from the PPC department and optimizing the order flow
+A data science project to demonstrate with actual Industry data coming from the PPC department and optimizing the order flow of the FischerTechnik
 
 Steps to Run the project:
 
