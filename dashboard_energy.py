@@ -108,7 +108,7 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
     html.H4(id='live-update-text'),
     # html.Div([dcc.Graph(id='live-update-graph',animate=True)],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
     html.Div([
-        html.Iframe(src = 'http://localhost:5000/servelivedata', height = 600, width = 600)
+        html.Iframe(id='iframe-livedata', src = 'http://localhost:5000/servelivedata', height = 600, width = 600)
     ],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
     dcc.Interval(
         id='interval-component',

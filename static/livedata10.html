@@ -23,9 +23,11 @@
 
 var chart;
 
-function requestData() {
+
+function fetchSingleData() {
+	var stName = "AIN10";
     $.ajax({
-        url: 'http://localhost:5000/labjackvalues', 
+        url: 'http://localhost:5000/labjackvalues/'+stName, 
         success: function(point) {
             var series = chart.series[0],
                 shift = series.data.length > 20; // shift if the series is   
@@ -33,26 +35,24 @@ function requestData() {
             // add the point
 			var newpoint = JSON.parse(point);
 			
-            chart.series[0].addPoint(newpoint[0], true, shift);
+            chart.series[0].addPoint(newpoint, true, shift);
 			
 			console.log(newpoint);
             
             // call it again after one second
-            setTimeout(requestData, 1000);    
+            setTimeout(fetchSingleData, 1000);    
         },
         cache: false
     });
 }
-
-//requestData();
-
+//fetchSingleData("AIN9");
 
 document.addEventListener('DOMContentLoaded', function() {
     chart = Highcharts.chart('container', {
         chart: {
             type: 'spline',
             events: {
-                load: requestData
+                load: fetchSingleData
             }
         },
         title: {

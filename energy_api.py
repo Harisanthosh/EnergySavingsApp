@@ -21,6 +21,10 @@ def root():
 def live_data_server():
     return app.send_static_file('livedata.html')
 
+@app.route('/servelivedata/<page>')
+def live_data_renderpage(page):
+    return app.send_static_file(page)
+
 @app.route('/labjackvalues')
 def labjack_values():
     # Open first found LabJack

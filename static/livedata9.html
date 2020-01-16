@@ -1,0 +1,67 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+
+<div id="container"></div>
+
+
+<style>
+#container {
+	min-width: 310px;
+	max-width: 1200px;
+	height: 600px;
+	margin: 0 auto;
+}
+</style>
+
+<script>
+
+var chart;
+
+
+function fetchSingleData() {
+	var stName = "AIN9";
+    $.ajax({
+        url: 'http://localhost:5000/labjackvalues/'+stName, 
+        success: function(point) {
+            var series = chart.series[0],
+                shift = series.data.length > 20; // shift if the series is   
+                                                    // longer than 20  
+            // add the point
+			var newpoint = JSON.parse(point);
+			
+            chart.series[0].addPoint(newpoint, true, shift);
+			
+			console.log(newpoint);
+            
+            // call it again after one second
+            setTimeout(fetchSingleData, 1000);    
+        },
+        cache: false
+    });
+}
+//fetchSingleData("AIN9");
+
+document.addEventListener('DOMContentLoaded', function() {
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'spline',
+            events: {
+                load: fetchSingleData
+            }
+        },
+        title: {
+            text: 'Live Labjack data'
+        },
+        series: [{
+            name: 'Live data',
+            data: []
+        }]
+    });        
+});
+</script>
