@@ -117,10 +117,11 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
     )
 ])
 
-@app.callback(Output("myGraph", "figure"),[Input('demo-dropdown', 'value')], [State("demo-dropdown", "value")])
+@app.callback([Output("myGraph", "figure"),Output("iframe-livedata", "src")],[Input('demo-dropdown', 'value')], [State("demo-dropdown", "value")])
 def update_energy_table(n_clicks,value):
     if(value == None):
         value = "dataRM"
+
     conn = sqlite3.connect('energy.db')
 
     c = conn.cursor()
@@ -157,7 +158,18 @@ def update_energy_table(n_clicks,value):
         rowcolor += 1
 
     plotly_fig = mpl_to_plotly(fig)
-    return plotly_fig
+
+    if(value == "dataRM"):
+        src = "http://localhost:5000/servelivedata/livedata0.html"
+    elif (value == "dataQC"):
+        src = "http://localhost:5000/servelivedata/livedata1.html"
+    elif (value == "dataRM_WS1"):
+        src = "http://localhost:5000/servelivedata/livedata2.html"
+    elif (value == "dataRM_WS3"):
+        src = "http://localhost:5000/servelivedata/livedata3.html"
+    else:
+        src = "http://localhost:5000/servelivedata/livedata10.html"
+    return plotly_fig, src
 
 
     # plt.show()
