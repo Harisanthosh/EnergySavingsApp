@@ -195,6 +195,18 @@ def update_energy_table(n_clicks,value):
         src = "http://localhost:5000/servelivedata/livedata2.html"
     elif (value == "dataRM_WS3"):
         src = "http://localhost:5000/servelivedata/livedata3.html"
+    elif (value == "dataRM_WS4"):
+        src = "http://localhost:5000/servelivedata/livedata4.html"
+    elif (value == "dataWS1_WS2"):
+        src = "http://localhost:5000/servelivedata/livedata5.html"
+    elif (value == "dataWS3_WS4"):
+        src = "http://localhost:5000/servelivedata/livedata6.html"
+    elif (value == "dataWS4_WS1"):
+        src = "http://localhost:5000/servelivedata/livedata7.html"
+    elif (value == "dataWS2_QR"):
+        src = "http://localhost:5000/servelivedata/livedata8.html"
+    elif (value == "dataWS4_QR"):
+        src = "http://localhost:5000/servelivedata/livedata9.html"
     else:
         src = "http://localhost:5000/servelivedata/livedata10.html"
     return plotly_fig, src
