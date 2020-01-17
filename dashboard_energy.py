@@ -112,7 +112,7 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
             placeholder="Enter Charge Id".format("text"),
         ),
     html.Button('Monitor from Transfact', id='button_neo',style={'color': '#D4AF37'}),
-    html.Div([html.H4(id='hide-display',children='Charge Processed', style={'display': 'none'})],style={'width': '49%', 'vertical-align': 'middle'}),
+    html.Div([html.H4(id='hide-display', style={'display': 'none'})],style={'width': '49%', 'vertical-align': 'middle'}),
     html.H4(id='live-update-text'),
     # html.Div([dcc.Graph(id='live-update-graph',animate=True)],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
     html.Div([
@@ -189,7 +189,7 @@ def update_layout(n):
     #return 'Labjack Values are {}'.format(data)
     return 'Live updating successfull for {} refreshes'.format(n)
 
-@app.callback(Output("hide-display", component_property='style'),[Input("button_neo", "n_clicks")], [State("input_text", "value")])
+@app.callback([Output("hide-display", component_property='style'),Output("hide-display","children")],[Input("button_neo", "n_clicks")], [State("input_text", "value")])
 def get_arbeitsschritte(n_clicks,value):
     if (value == None):
         return {'display': 'none'}
@@ -202,8 +202,9 @@ def get_arbeitsschritte(n_clicks,value):
     print(respdata[0]["asDatAnmeldung"])
     print(respdata[0]["asDatAbmeldung"])
     #print(respdata)
+    #return_data = respdata[0]["asId"] + "," + respdata[0]["asAnweisung"] + "," + respdata[0]["asDatAnmeldung"] + "," +respdata[0]["asDatAbmeldung"]
 
-    return {'display': 'block'}
+    return {'display': 'block'}, respdata[0]["asAnweisung"]
 
 
 
