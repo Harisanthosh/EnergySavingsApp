@@ -2,6 +2,8 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
+import dash_table
+import pandas as pd
 import sqlite3
 #from plotly.offline import init_notebook_mode, plot_mpl
 import plotly
@@ -114,7 +116,20 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
     html.Button('Monitor from Transfact', id='button_neo',style={'color': '#D4AF37'}),
     html.Div([html.H4(id='hide-display', style={'display': 'none'})],style={'width': '49%', 'vertical-align': 'middle'}),
     html.H4(id='live-update-text'),
-    # html.Div([dcc.Graph(id='live-update-graph',animate=True)],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
+    dash_table.DataTable(
+        id='table_as',
+        columns=[{"name": "Id", "id": "Id"},{"name": "Anweisung", "id": "Anweisung"},{"name": "AS_DatAnmeldung", "id": "AS_DatAnmeldung"},{"name": "AS_DatAbmeldung", "id": "AS_DatAbmeldung"}],
+        style_data_conditional=[
+        {
+            'if': {'row_index': 'odd'},
+            'backgroundColor': 'rgb(248, 248, 248)'
+        }
+    ],
+        style_header={
+        'backgroundColor': 'rgb(230, 230, 230)',
+        'fontWeight': 'bold'
+        }
+    ),
     html.Div([
         html.Iframe(id='iframe-livedata', src = 'http://localhost:5000/servelivedata', height = 600, width = 600)
     ],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
@@ -183,28 +198,42 @@ def update_energy_table(n_clicks,value):
     # plt.show()
 
 
+
 @app.callback(Output('live-update-text', 'children'),
               [Input('interval-component', 'n_intervals')])
 def update_layout(n):
-    #return 'Labjack Values are {}'.format(data)
-    return 'Live updating successfull for {} refreshes'.format(n)
+    return 'Live updates of PPS03 FischerTechnik - {}'.format(n)
 
-@app.callback([Output("hide-display", component_property='style'),Output("hide-display","children")],[Input("button_neo", "n_clicks")], [State("input_text", "value")])
+
+@app.callback([Output("hide-display", component_property='style'),Output("table_as","data")],[Input("button_neo", "n_clicks")], [State("input_text", "value")])
 def get_arbeitsschritte(n_clicks,value):
     if (value == None):
         return {'display': 'none'}
         #value = "30632"
     updated_url = url_restserver + value
     res = requests.get(updated_url)
+    newresdata = {}
     respdata = res.json()
-    print(respdata[0]["asId"])
-    print(respdata[0]["asAnweisung"])
-    print(respdata[0]["asDatAnmeldung"])
-    print(respdata[0]["asDatAbmeldung"])
-    #print(respdata)
-    #return_data = respdata[0]["asId"] + "," + respdata[0]["asAnweisung"] + "," + respdata[0]["asDatAnmeldung"] + "," +respdata[0]["asDatAbmeldung"]
+    newresdata["Id"] = [ifx["asId"] for ifx in respdata]
+    newresdata["Anweisung"] = [ifx["asAnweisung"] for ifx in respdata]
+    newresdata["AS_DatAnmeldung"] = [ifx["asDatAnmeldung"] for ifx in respdata]
+    newresdata["AS_DatAbmeldung"] = [ifx["asDatAbmeldung"] for ifx in respdata]
+    # returnarrx = []
+    # for key, value in newresdata.items():
+    #     #temp = [key, value]
+    #     print(key,value)
+    #     returnarrx.append(value)
 
-    return {'display': 'block'}, respdata[0]["asAnweisung"]
+    # print(respdata[0]["asId"])
+    # print(respdata[0]["asAnweisung"])
+    # print(respdata[0]["asDatAnmeldung"])
+    # print(respdata[0]["asDatAbmeldung"])
+
+    df_respdata = pd.DataFrame(newresdata)
+    print(df_respdata)
+
+
+    return {'display': 'block'}, df_respdata.to_dict('records')
 
 
 
