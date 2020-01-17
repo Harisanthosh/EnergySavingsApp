@@ -109,7 +109,7 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
     dcc.Input(
             id="input_text".format("text"),
             type="text",
-            placeholder="Enter FischerTechnik's Charge Id".format("text"),
+            placeholder="Enter Charge Id".format("text"),
         ),
     html.Button('Monitor from Transfact', id='button_neo',style={'color': '#D4AF37'}),
     html.Div([html.H4(id='hide-display',children='Charge Processed', style={'display': 'none'})],style={'width': '49%', 'vertical-align': 'middle'}),
@@ -197,7 +197,11 @@ def get_arbeitsschritte(n_clicks,value):
     updated_url = url_restserver + value
     res = requests.get(updated_url)
     respdata = res.json()
-    print(respdata)
+    print(respdata[0]["asId"])
+    print(respdata[0]["asAnweisung"])
+    print(respdata[0]["asDatAnmeldung"])
+    print(respdata[0]["asDatAbmeldung"])
+    #print(respdata)
 
     return {'display': 'block'}
 
