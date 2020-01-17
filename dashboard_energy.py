@@ -116,6 +116,7 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
     html.Button('Monitor from Transfact', id='button_neo',style={'color': '#D4AF37'}),
     html.Div([html.H4(id='hide-display', style={'display': 'none'})],style={'width': '49%', 'vertical-align': 'middle'}),
     html.H4(id='live-update-text'),
+    html.Div([
     dash_table.DataTable(
         id='table_as',
         columns=[{"name": "Id", "id": "Id"},{"name": "Anweisung", "id": "Anweisung"},{"name": "AS_DatAnmeldung", "id": "AS_DatAnmeldung"},{"name": "AS_DatAbmeldung", "id": "AS_DatAbmeldung"}],
@@ -134,7 +135,8 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
                 'font-size': '20px',
                 'text-align': 'center'
         },
-    ),
+    )
+    ],id='workingstep-disparea',style={'display': 'none'}),
     html.Div([
         html.Iframe(id='iframe-livedata', src = 'http://localhost:5000/servelivedata', height = 600, width = 600)
     ],style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}),
@@ -222,8 +224,8 @@ def update_layout(n):
     return 'Live updates of PPS03 FischerTechnik - {}'.format(n)
 
 
-@app.callback([Output("hide-display", component_property='style'),Output("table_as","data")],[Input("button_neo", "n_clicks")], [State("input_text", "value")])
-def get_arbeitsschritte(n_clicks,value):
+@app.callback([Output("workingstep-disparea", component_property='style'),Output("table_as","data")],[Input("button_neo", "n_clicks"),Input('interval-component', 'n_intervals')], [State("input_text", "value")])
+def get_arbeitsschritte(n_clicks,n_intervals,value):
     if (value == None):
         return {'display': 'none'}
         #value = "30632"
@@ -256,4 +258,4 @@ def get_arbeitsschritte(n_clicks,value):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
