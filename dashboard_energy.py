@@ -128,7 +128,12 @@ app.layout = html.Div(style={'textAlign': 'center'},children=[
         style_header={
         'backgroundColor': 'rgb(230, 230, 230)',
         'fontWeight': 'bold'
-        }
+        },
+        style_cell = {
+                'font-family': 'cursive',
+                'font-size': '20px',
+                'text-align': 'center'
+        },
     ),
     html.Div([
         html.Iframe(id='iframe-livedata', src = 'http://localhost:5000/servelivedata', height = 600, width = 600)
