@@ -237,20 +237,20 @@ def get_arbeitsschritte(n_clicks,n_intervals,value):
     newresdata["Anweisung"] = [ifx["asAnweisung"] for ifx in respdata]
     newresdata["AS_DatAnmeldung"] = [ifx["asDatAnmeldung"] for ifx in respdata]
     newresdata["AS_DatAbmeldung"] = [ifx["asDatAbmeldung"] for ifx in respdata]
-    # returnarrx = []
-    # for key, value in newresdata.items():
-    #     #temp = [key, value]
-    #     print(key,value)
-    #     returnarrx.append(value)
-
-    # print(respdata[0]["asId"])
-    # print(respdata[0]["asAnweisung"])
-    # print(respdata[0]["asDatAnmeldung"])
-    # print(respdata[0]["asDatAbmeldung"])
 
     df_respdata = pd.DataFrame(newresdata)
     print(df_respdata)
-
+    for index, row in df_respdata.iterrows():
+        anmeld_x = row['AS_DatAnmeldung']
+        abmeld_x = row['AS_DatAbmeldung']
+        print(anmeld_x, abmeld_x)
+        if(anmeld_x != None and abmeld_x != None):
+            print("Working step has been completed")
+        elif(anmeld_x == None and abmeld_x == None):
+            print("Working step is yet to start")
+        else:
+            print("Working Step - In Progress")
+    #print(df_respdata.iloc[0]["AS_DatAnmeldung"],df_respdata.iloc[0]["AS_DatAbmeldung"])
 
     return {'display': 'block'}, df_respdata.to_dict('records')
 
