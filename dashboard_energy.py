@@ -5,7 +5,6 @@ from dash.dependencies import Input, Output, State
 import dash_table
 import pandas as pd
 import sqlite3
-#from plotly.offline import init_notebook_mode, plot_mpl
 import plotly
 from plotly.tools import mpl_to_plotly
 import requests
@@ -13,7 +12,9 @@ import requests
 import plotly.graph_objs as go
 from collections import deque
 import matplotlib.animation as animation
-from flask_socketio import SocketIO
+# from flask_socketio import SocketIO
+import paho.mqtt.publish as publish
+import paho.mqtt.client as paho
 
 import matplotlib
 matplotlib.use('Agg')
@@ -36,14 +37,18 @@ colors = {
 }
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-server = app.server
-server.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(server)
+# server = app.server
+# server.config['SECRET_KEY'] = 'secret!'
+# socketio = SocketIO(server)
+#
+# @socketio.on('welcome')
+# def handle_message(message):
+#     print(str(message))
 
-@socketio.on('welcome')
-def handle_message(message):
-    print(str(message))
-
+# client1= paho.Client("control1",transport='websockets')
+publish.single("World","Initializing broker",hostname="localhost", port=1883)
+# client1.connect("127.0.0.1",9883)
+# client1.publish("World","Initializing broker")
 conn = sqlite3.connect('energy.db')
 
 c = conn.cursor()
@@ -256,7 +261,10 @@ def get_arbeitsschritte(n_clicks,n_intervals,value):
             print("Working step has been completed")
         elif(anmeld_x != None and abmeld_x == None):
             print("Working Step - In Progress")
-            socketio.emit('update', index)
+            # client1.publish("World", "Working Step In Progress")
+            publish.single("World","Working Step In Progress",hostname="localhost", port=1883)
+            # socketio.emit('update', index)
+
             # curr_station = "AIN0"
             # url_labjack_curr = "http://localhost:5000/labjackvalues/" + curr_station
             # res = requests.get(url_labjack_curr)
