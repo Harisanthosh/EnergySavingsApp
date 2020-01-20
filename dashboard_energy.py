@@ -13,6 +13,7 @@ import requests
 import plotly.graph_objs as go
 from collections import deque
 import matplotlib.animation as animation
+from flask_socketio import SocketIO
 
 import matplotlib
 matplotlib.use('Agg')
@@ -35,6 +36,13 @@ colors = {
 }
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
+server.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(server)
+
+@socketio.on('welcome')
+def handle_message(message):
+    print(str(message))
 
 conn = sqlite3.connect('energy.db')
 
@@ -246,10 +254,17 @@ def get_arbeitsschritte(n_clicks,n_intervals,value):
         print(anmeld_x, abmeld_x)
         if(anmeld_x != None and abmeld_x != None):
             print("Working step has been completed")
-        elif(anmeld_x == None and abmeld_x == None):
-            print("Working step is yet to start")
-        else:
+        elif(anmeld_x != None and abmeld_x == None):
             print("Working Step - In Progress")
+            socketio.emit('update', index)
+            # curr_station = "AIN0"
+            # url_labjack_curr = "http://localhost:5000/labjackvalues/" + curr_station
+            # res = requests.get(url_labjack_curr)
+            # respdata = res.json()
+            # print(respdata)
+        else:
+            print("Working step is yet to start")
+
     #print(df_respdata.iloc[0]["AS_DatAnmeldung"],df_respdata.iloc[0]["AS_DatAbmeldung"])
 
     return {'display': 'block'}, df_respdata.to_dict('records')
