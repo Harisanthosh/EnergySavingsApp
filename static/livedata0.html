@@ -26,7 +26,7 @@
 var chart;
 
 // Create a client instance
-client = new Paho.MQTT.Client("127.0.0.1", Number(1883), "clientId");
+client = new Paho.MQTT.Client("localhost", Number(8883), "clientId");
 console.log(client);
 // set callback handlers
 client.onConnectionLost = onConnectionLost;
@@ -58,6 +58,27 @@ function onMessageArrived(message) {
   console.log("onMessageArrived:"+message.payloadString);
 }
 
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+				console.log(allText);
+                alert(allText);
+				console.log(allText);
+            }
+        }
+    }
+    //rawFile.send(null);
+}
+//D:/HariMasters/SIMPROD/ERP/AKZ/EnergyDatabase/Unterlagen_für_Energiedatenbank/EnergyApp
+readTextFile("file:///D:/HariMasters/SIMPROD/ERP/AKZ/EnergyDatabase/Unterlagen_für_Energiedatenbank/EnergyApp/storevalues.txt");
 
 function fetchSingleData() {
 	var stName = "AIN0";

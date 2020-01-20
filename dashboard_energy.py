@@ -40,10 +40,6 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 # server = app.server
 # server.config['SECRET_KEY'] = 'secret!'
 # socketio = SocketIO(server)
-#
-# @socketio.on('welcome')
-# def handle_message(message):
-#     print(str(message))
 
 # client1= paho.Client("control1",transport='websockets')
 publish.single("World","Initializing broker",hostname="localhost", port=1883)
