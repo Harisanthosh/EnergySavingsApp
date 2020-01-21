@@ -1,11 +1,11 @@
 # EnergySavingsApp
 A data science project to demonstrate with actual Industry data coming from the PPC department and optimizing the order flow of the FischerTechnik
 
-#Prerequisites:
+# Prerequisites:
 Make sure to have the FischerTechnik Setup running, power on all the Raspberry PI's, start the program in the TXT Controller and ensure the local REST Server is running.
 
 
-#Steps to Run the project:
+# Steps to Run the project:
 
 1. Install all the dependencies needed using pip install -r requirements.txt
 2. Run the Energy API by setting up the Flask server
