@@ -3,10 +3,11 @@ import requests
 import pandas as pd
 import sqlite3
 import sys
+from datetime import datetime
 
 # The callback for when the client receives a CONNACK response from the server.
 station = {}
-station["AIN0"] = []
+station["AIN1"] = []
 station["ChargeId"] = []
 station["Time"] = []
 
@@ -24,12 +25,17 @@ def on_message(client, userdata, msg):
     url_labjack_curr = "http://localhost:5000/labjackvalues/" + curr_station
     res = requests.get(url_labjack_curr)
     respdata = res.json()
-    station["AIN0"].append(respdata)
+    station["AIN1"].append(respdata)
+    now = datetime.now()
+    station["Time"].append(str(now))
+    chargeId = str(msg.payload).split('|')[1]
+    updchargeId = chargeId.split("'")[0]
+    station["ChargeId"].append(updchargeId)
     #print(station["AIN0"])
     df_station = pd.DataFrame(station)
     conn = sqlite3.connect('energy.db')
-    df_station.to_sql('dataAIN0', conn, if_exists='replace', index=False)
-    pd.read_sql('select * from dataAIN0', conn)
+    df_station.to_sql('dataAIN1', conn, if_exists='replace', index=False)
+    pd.read_sql('select * from dataAIN1', conn)
     #print(df_station)
 
 client = mqtt.Client()
