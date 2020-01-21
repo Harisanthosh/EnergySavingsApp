@@ -2,10 +2,13 @@ import paho.mqtt.client as mqtt
 import requests
 import pandas as pd
 import sqlite3
+import sys
 
 # The callback for when the client receives a CONNACK response from the server.
 station = {}
 station["AIN0"] = []
+station["ChargeId"] = []
+station["Time"] = []
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))

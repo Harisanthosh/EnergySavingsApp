@@ -36,13 +36,15 @@ colors = {
     'text': '#7FDBFF'
 }
 
+global as_state
+as_state = 1
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 # server = app.server
 # server.config['SECRET_KEY'] = 'secret!'
 # socketio = SocketIO(server)
 
 # client1= paho.Client("control1",transport='websockets')
-publish.single("World","Initializing broker",hostname="localhost", port=1883)
+publish.single("World","Initializing broker {}".format(as_state),hostname="localhost", port=1883)
 # client1.connect("127.0.0.1",9883)
 # client1.publish("World","Initializing broker")
 conn = sqlite3.connect('energy.db')
@@ -255,10 +257,11 @@ def get_arbeitsschritte(n_clicks,n_intervals,value):
         print(anmeld_x, abmeld_x)
         if(anmeld_x != None and abmeld_x != None):
             print("Working step has been completed")
+            as_state = 0
         elif(anmeld_x != None and abmeld_x == None):
             print("Working Step - In Progress")
             # client1.publish("World", "Working Step In Progress")
-            publish.single("World","Working Step In Progress",hostname="localhost", port=1883)
+            publish.single("World","Working Step In Progress {0} | {1}".format(as_state,value),hostname="localhost", port=1883)
             # socketio.emit('update', index)
 
             # curr_station = "AIN0"
