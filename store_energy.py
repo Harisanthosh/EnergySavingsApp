@@ -29,12 +29,12 @@ def on_message(client, userdata, msg):
     now = datetime.now()
     station["Time"].append(str(now))
     chargeId = str(msg.payload).split('|')[1]
-    updchargeId = chargeId.split("'")[0]
+    updchargeId = chargeId.split("'")[0].strip()
     station["ChargeId"].append(updchargeId)
     #print(station["AIN0"])
     df_station = pd.DataFrame(station)
     conn = sqlite3.connect('energy.db')
-    df_station.to_sql('dataAIN1', conn, if_exists='replace', index=False)
+    df_station.to_sql('dataAIN1', conn, if_exists='append', index=False)
     pd.read_sql('select * from dataAIN1', conn)
     #print(df_station)
 
