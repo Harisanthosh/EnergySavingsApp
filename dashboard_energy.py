@@ -37,7 +37,9 @@ colors = {
 }
 
 global as_state
-as_state = 1
+global as_counter
+as_state = 0
+as_counter = 0
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 # server = app.server
 # server.config['SECRET_KEY'] = 'secret!'
@@ -251,6 +253,8 @@ def get_arbeitsschritte(n_clicks,n_intervals,value):
 
     df_respdata = pd.DataFrame(newresdata)
     print(df_respdata)
+    global as_state
+    global as_counter
     for index, row in df_respdata.iterrows():
         anmeld_x = row['AS_DatAnmeldung']
         abmeld_x = row['AS_DatAbmeldung']
@@ -258,17 +262,16 @@ def get_arbeitsschritte(n_clicks,n_intervals,value):
         if(anmeld_x != None and abmeld_x != None):
             print("Working step has been completed")
             as_state = 0
+            as_counter = 0
         elif(anmeld_x != None and abmeld_x == None):
             print("Working Step - In Progress")
-            # client1.publish("World", "Working Step In Progress")
-            publish.single("World","Working Step In Progress {0} | {1}".format(as_state,value),hostname="localhost", port=1883)
+            as_state += 1
+            if(as_state == 1):
+                as_counter += 1
+            else:
+                pass
+            publish.single("World","Working Step In Progress -{0} | {1}".format(as_counter,value),hostname="localhost", port=1883)
             # socketio.emit('update', index)
-
-            # curr_station = "AIN0"
-            # url_labjack_curr = "http://localhost:5000/labjackvalues/" + curr_station
-            # res = requests.get(url_labjack_curr)
-            # respdata = res.json()
-            # print(respdata)
         else:
             print("Working step is yet to start")
 
