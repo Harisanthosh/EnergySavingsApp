@@ -262,7 +262,7 @@ def get_arbeitsschritte(n_clicks,n_intervals,value):
         if(anmeld_x != None and abmeld_x != None):
             print("Working step has been completed")
             as_state = 0
-            as_counter = 0
+            #as_counter = 0
         elif(anmeld_x != None and abmeld_x == None):
             print("Working Step - In Progress")
             as_state += 1
