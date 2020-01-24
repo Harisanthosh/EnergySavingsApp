@@ -27,28 +27,28 @@ def on_message(client, userdata, msg):
     updchargeId = chargeId.split("'")[0].strip()
     station["ChargeId"].append(updchargeId)
     #print(station["AIN0"])
-    if(curr_val == '1'):
+    if(curr_val == '0'):
         table_name = "dataAIN0"
         curr_station = "AIN0"
-    elif(curr_val == '2'):
+    elif(curr_val == '1'):
         table_name = "dataAIN1"
         curr_station = "AIN1"
-    elif (curr_val == '3'):
+    elif (curr_val == '2'):
         table_name = "dataAIN2"
         curr_station = "AIN2"
-    elif (curr_val == '4'):
+    elif (curr_val == '3'):
         table_name = "dataAIN3"
         curr_station = "AIN3"
-    elif (curr_val == '5'):
+    elif (curr_val == '4'):
         table_name = "dataAIN4"
         curr_station = "AIN4"
-    elif (curr_val == '6'):
+    elif (curr_val == '5'):
         table_name = "dataAIN5"
         curr_station = "AIN5"
-    elif (curr_val == '7'):
+    elif (curr_val == '6'):
         table_name = "dataAIN6"
         curr_station = "AIN6"
-    elif (curr_val == '8'):
+    elif (curr_val == '7'):
         table_name = "dataAIN7"
         curr_station = "AIN7"
     else:

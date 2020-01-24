@@ -253,9 +253,9 @@ def get_arbeitsschritte(n_clicks,n_intervals,value):
 
     df_respdata = pd.DataFrame(newresdata)
     print(df_respdata)
-    global as_state
-    global as_counter
     for index, row in df_respdata.iterrows():
+        global as_state
+        global as_counter
         anmeld_x = row['AS_DatAnmeldung']
         abmeld_x = row['AS_DatAbmeldung']
         print(anmeld_x, abmeld_x)
@@ -270,7 +270,7 @@ def get_arbeitsschritte(n_clicks,n_intervals,value):
                 as_counter += 1
             else:
                 pass
-            publish.single("World","Working Step In Progress -{0} | {1}".format(as_counter,value),hostname="localhost", port=1883)
+            publish.single("World","Working Step In Progress -{0} | {1}".format(index,value),hostname="localhost", port=1883)
             # socketio.emit('update', index)
         else:
             print("Working step is yet to start")
