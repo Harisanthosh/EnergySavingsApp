@@ -74,7 +74,7 @@ itsdangerous==1.1.0
 jdcal==1.4.1
 jedi==0.12.1
 jieba==0.39
-Jinja2==2.10
+Jinja2==2.11.3
 jmespath==0.9.3
 joblib==0.13.2
 jsonpatch==1.23
