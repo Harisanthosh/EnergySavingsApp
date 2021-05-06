@@ -52,7 +52,7 @@ et-xmlfile==1.0.1
 fastapi==0.35.0
 Flask==1.0.2
 Flask-Compress==1.4.0
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 flask-heroku==0.1.9
 folium==0.10.1
 future==0.16.0
