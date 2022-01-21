@@ -64,7 +64,7 @@ idna==2.7
 ijson==2.5.1
 imagesize==1.1.0
 ipykernel==4.9.0
-ipython==6.5.0
+ipython==7.16.3
 ipython-genutils==0.2.0
 ipywidgets==7.4.1
 iso8601==0.1.12
